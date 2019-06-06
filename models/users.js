@@ -10,6 +10,14 @@ class User {
         this.password = password;
     }
 
+    async checkPassword(hashedPassword) {
+        // sytax: bcrypt.compareSync(arg1, arg2)
+        // first argument is what the user put in the form 
+        // second arguement is the hashed password
+        // return true or false
+        return bcrypt.compareSync(this.password, hashedPassword);
+    }
+
     async save() {
         try {
             const response = await db.one(`
@@ -22,6 +30,31 @@ class User {
             console.log('user was created with id:', response.id);
             return response;
         }catch(err){
+            return err.message;
+        }
+    }
+    async login() {
+        console.log('async login')
+        try {
+            const response = await db.one(`
+                select id, first_name, last_name, password
+                    from users
+                where email = $1`, [this.email]);
+                console.log('hash is ', response.password);
+            const isValid = await this.checkPassword(response.password);
+            if (!!isValid) {  // if (isValid === absolutely, totally, like really really true)
+                // destructure the values we want from the response
+                const { first_name, last_name, id } = response; 
+                // this line will return the isValid, first name, last name, and user id
+                return { isValid, first_name, last_name, user_id: id}
+            } else {
+                // Just return the false isValid
+                return { isValid }
+            };
+            console.log('Is it valid', isValid);
+            return isValid;
+
+        } catch(err) {
             return err.message;
         }
     }

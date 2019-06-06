@@ -1,1 +1,10 @@
-<h1>This is the index page</h1>
+${!!is_logged_in ? `
+    <h1>Hello ${userName}</h1>
+` : `
+    <p>Hello World!</p>
+`}
+
+
+
+
+

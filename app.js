@@ -1,12 +1,12 @@
 const express = require('express'),
 session = require('express-session'),
-FileStore = require('session-file-store')(session),
 path = require('path'),
 es6Renderer = require('express-es6-template-engine'),
 cookieParser = require('cookie-parser'),
-logger = require('morgan'),
+logger = require('morgan');
 
-indexRouter = require('./routes/index'),
+
+const indexRouter = require('./routes/index'),
 usersRouter = require('./routes/users'),
 restaurantsRouter = require('./routes/restaurants'),
 reviewsRouter = require('./routes/reviews');
@@ -23,7 +23,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-    store: new FileStore(),
     secret: 'get rad',
     resave: false,
     saveUninitialized: true,
