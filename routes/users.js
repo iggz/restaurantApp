@@ -72,10 +72,17 @@ router.post('/login', (req,res) => {
     // res.sendStatus(200);
 });
 
-router.post('/signup', (req,res) => {
-    // console.log(req.body);
-    const {first_name, last_name, email, password } = req.body;
+router.post('/signup', async (req,res) => {
+    
+    // this is the fast way of doing this
+    // const { first_name, last_name, email, password } = req.body;
 
+    const first_name = req.body.first_name;
+    const last_name = req.body.last_name;
+    const email = req.body.email;
+    const password = req.body.password;
+    console.log('req.body is displayed as: ', req.body);
+    console.log('email as entered', email);
     // Salt and hash our password
     const salt = bcrypt.genSaltSync(10);  // 10 is the amount of random characters to add to our password.
     
@@ -87,10 +94,17 @@ router.post('/signup', (req,res) => {
     // Create a new user instance, with the sign up information
     const userInstance = new User (null, first_name, last_name, email, hash);
     
-    userInstance.save().then(response => {
+    let check = await userInstance.CheckIfDuplicate();
+
+    if(typeof check === 'object') {
+        console.log('This email is already registered. Please register a new email ya freakin jabronie!!!!');
+        res.redirect('/users/login');
+    } else {
+    await userInstance.save().then(response => {
         console.log("signup response is", response);
-        res.sendStatus(200);
+        res.redirect('/users/login');
     });
+}
 });
 
 module.exports = router;

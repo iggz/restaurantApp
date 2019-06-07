@@ -10,11 +10,26 @@ class User {
         this.password = password;
     }
 
+    async CheckIfDuplicate() {
+        try{
+            const response = await db.one(`
+                SELECT email 
+                FROM users 
+                WHERE email = $1
+            `, [this.email]);
+            return response;
+        } catch(err){
+            return err.message;
+        }
+    }
+
     async checkPassword(hashedPassword) {
         // sytax: bcrypt.compareSync(arg1, arg2)
         // first argument is what the user put in the form 
-        // second arguement is the hashed password
+        // second argument is the hashed password
         // return true or false
+        console.log("this.password: ", this.password);
+        console.log("hashedPassword: ", hashedPassword);
         return bcrypt.compareSync(this.password, hashedPassword);
     }
 
@@ -33,6 +48,7 @@ class User {
             return err.message;
         }
     }
+
     async login() {
         console.log('async login')
         try {
@@ -51,8 +67,6 @@ class User {
                 // Just return the false isValid
                 return { isValid }
             };
-            console.log('Is it valid', isValid);
-            return isValid;
 
         } catch(err) {
             return err.message;
