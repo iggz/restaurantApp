@@ -17,6 +17,7 @@ class User {
                 FROM users 
                 WHERE email = $1
             `, [this.email]);
+            console.log("checked for duplicates: ", this.email)
             return response;
         } catch(err){
             return err.message;
